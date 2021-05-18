@@ -13,8 +13,6 @@ import numpy
 import re
 import xml.etree.ElementTree as ET
 import shutil
-from multiprocessing import set_start_method, get_context
-from multiprocessing import Pool, cpu_count
 
 AUG_NB_AUGMENTATION_PER_IMAGE = int(
     os.getenv('AUG_NB_AUGMENTATION_PER_IMAGE', 10))
@@ -262,7 +260,6 @@ def compute_cluster(image_path):
 
 
 if __name__=="__main__":
-    set_start_method("spawn")
     ia.seed(1)
 
     if (create_directory(DATASET_AUGM_IMAGES_DIR) == False):
@@ -271,10 +268,5 @@ if __name__=="__main__":
         exit(1)
 
     images_path = list(paths.list_images(DATASET_IMAGES_DIR))
-    # cpu_num = cpu_count() if cpu_count() == 1 else cpu_count()
-    cpu_num = 1
-    with get_context("spawn").Pool(cpu_num) as pool:
-        # pool = Pool(cpu_count())
-        pool_outputs = pool.map(compute_cluster, images_path)
-        pool.close() # no more tasks
-        pool.join()  # wrap up current tasks
+    for image_path in images_path:
+        compute_cluster(image_path)
