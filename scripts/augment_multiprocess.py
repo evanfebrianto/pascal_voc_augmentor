@@ -271,8 +271,8 @@ if __name__=="__main__":
         exit(1)
 
     images_path = list(paths.list_images(DATASET_IMAGES_DIR))
-    # cpu_num = cpu_count() if cpu_count() == 1 else cpu_count()
-    cpu_num = 1
+    cpu_num = cpu_count() if cpu_count() == 1 else cpu_count() // 2
+    # cpu_num = 1
     with get_context("spawn").Pool(cpu_num) as pool:
         # pool = Pool(cpu_count())
         pool_outputs = pool.map(compute_cluster, images_path)
